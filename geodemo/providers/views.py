@@ -1,8 +1,8 @@
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework import viewsets
 
 from .models import Provider, Language, Currency, ServiceArea
 from .serializers import ProviderSerializer, LanguageSerializer, CurrencySerializer, ServiceAreaSerializer
-
 
 class ProviderViewSet(viewsets.ModelViewSet):
     """
@@ -10,6 +10,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
     """
     queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class LanguageViewSet(viewsets.ModelViewSet):
@@ -18,6 +19,7 @@ class LanguageViewSet(viewsets.ModelViewSet):
     """
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class CurrencyViewSet(viewsets.ModelViewSet):
@@ -26,6 +28,7 @@ class CurrencyViewSet(viewsets.ModelViewSet):
     """
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class ServiceAreaViewSet(viewsets.ModelViewSet):
@@ -34,3 +37,4 @@ class ServiceAreaViewSet(viewsets.ModelViewSet):
     """
     queryset = ServiceArea.objects.all()
     serializer_class = ServiceAreaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]

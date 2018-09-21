@@ -38,3 +38,12 @@ class Provider(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ServiceArea(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    provider = models.ForeignKey('Provider', null=False, on_delete=models.CASCADE)
+    area = models.MultiPolygonField()
+
+    def __str__(self):
+        return self.name

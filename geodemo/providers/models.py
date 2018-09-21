@@ -1,7 +1,5 @@
 from django.contrib.gis.db import models
 
-# Create your models here.
-
 
 class Language(models.Model):
     name = models.CharField(max_length=256, blank=False, unique=True)
@@ -42,7 +40,8 @@ class Provider(models.Model):
 
 class ServiceArea(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    provider = models.ForeignKey('Provider', null=False, on_delete=models.CASCADE)
+    provider = models.ForeignKey(
+        'Provider', null=False, related_name='service_areas', on_delete=models.CASCADE)
     area = models.MultiPolygonField()
 
     def __str__(self):

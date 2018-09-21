@@ -1,4 +1,4 @@
-"""geodemo URL Configuration
+"""geodemo URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
@@ -13,9 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.urls import path
 
+from rest_framework import routers
+from providers import views
+
+router = routers.DefaultRouter()
+router.register(r'providers', views.ProviderViewSet)
+router.register(r'languages', views.LanguageViewSet)
+router.register(r'currencies', views.CurrencyViewSet)
+router.register(r'service_areas', views.ServiceAreaViewSet)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^api/v1/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

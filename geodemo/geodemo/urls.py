@@ -13,12 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.urls import path
-
-from rest_framework import routers
 from providers import views
+from rest_framework import routers
+from rest_framework.schemas import get_schema_view
 
 router = routers.DefaultRouter()
 router.register(r'providers', views.ProviderViewSet)
@@ -26,8 +26,11 @@ router.register(r'languages', views.LanguageViewSet)
 router.register(r'currencies', views.CurrencyViewSet)
 router.register(r'service_areas', views.ServiceAreaViewSet)
 
+schema_view = get_schema_view(title='Geodemo API')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/v1/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^schema/$', schema_view),
 ]

@@ -1,5 +1,7 @@
 from django.contrib.gis.db import models
 
+from django.core.validators import MinValueValidator, DecimalValidator
+
 
 class Language(models.Model):
     name = models.CharField(max_length=256, blank=False, unique=True)
@@ -42,6 +44,11 @@ class ServiceArea(models.Model):
     name = models.CharField(max_length=50, unique=True)
     provider = models.ForeignKey(
         'Provider', null=False, related_name='service_areas', on_delete=models.CASCADE)
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        default=0,
+        validators=[MinValueValidator(0), DecimalValidator(10, 4)])
     area = models.MultiPolygonField()
 
     def __str__(self):

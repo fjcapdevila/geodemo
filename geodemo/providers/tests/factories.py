@@ -2,7 +2,8 @@ from decimal import Decimal
 import factory
 
 from django.contrib.auth.models import User
-from . import models
+from django.contrib.gis.geos import MultiPolygon, Polygon
+from providers import models
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -53,4 +54,5 @@ class ServiceAreaFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: "service_area_%d" % n)
     provider = factory.SubFactory(ProviderFactory)
+    area = MultiPolygon([Polygon(((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))), ])
     price = Decimal('1.0')

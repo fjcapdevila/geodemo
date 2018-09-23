@@ -30,6 +30,8 @@ def get_default_currency():
 
 class Provider(models.Model):
     """docstring for Provider"""
+    owner = models.ForeignKey(
+        'auth.User', null=True, related_name='providers', on_delete=models.CASCADE)
     name = models.CharField(max_length=256, blank=False, unique=True)
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)

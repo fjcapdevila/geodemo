@@ -7,11 +7,11 @@ from .models import Currency, Language, Provider, ServiceArea
 class ProviderSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for Providers."""
 
+    owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = Provider
-        fields = ('name', 'email', 'phone_number', 'language', 'currency', 'service_areas')
-        service_areas = serializers.PrimaryKeyRelatedField(
-            many=True, queryset=ServiceArea.objects.all())
+        fields = ('name', 'email', 'phone_number', 'language', 'currency', 'service_areas', 'owner')
 
 
 class LanguageSerializer(serializers.ModelSerializer):

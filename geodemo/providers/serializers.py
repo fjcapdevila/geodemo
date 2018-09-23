@@ -14,7 +14,7 @@ class ProviderSerializer(serializers.HyperlinkedModelSerializer):
             many=True, queryset=ServiceArea.objects.all())
 
 
-class LanguageSerializer(serializers.HyperlinkedModelSerializer):
+class LanguageSerializer(serializers.ModelSerializer):
     """Serializer for Languages."""
 
     class Meta:
@@ -22,7 +22,7 @@ class LanguageSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('name', )
 
 
-class CurrencySerializer(serializers.HyperlinkedModelSerializer):
+class CurrencySerializer(serializers.ModelSerializer):
     """Serializer for Currencies."""
 
     class Meta:

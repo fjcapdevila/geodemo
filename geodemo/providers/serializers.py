@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from .models import Currency, Language, Provider, ServiceArea
 
@@ -29,9 +30,10 @@ class CurrencySerializer(serializers.HyperlinkedModelSerializer):
         fields = ('name', )
 
 
-class ServiceAreaSerializer(serializers.HyperlinkedModelSerializer):
+class ServiceAreaSerializer(GeoFeatureModelSerializer):
     """Serializer for Service Areas."""
 
     class Meta:
         model = ServiceArea
-        fields = ('name', 'provider', 'area')
+        geo_field = "area"
+        fields = '__all__'

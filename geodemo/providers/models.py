@@ -4,6 +4,8 @@ from django.core.validators import MinValueValidator, DecimalValidator
 
 
 class Language(models.Model):
+    """Language."""
+
     name = models.CharField(max_length=256, blank=False, unique=True)
 
     def __str__(self):
@@ -11,6 +13,8 @@ class Language(models.Model):
 
 
 class Currency(models.Model):
+    """Currency."""
+
     name = models.CharField(max_length=256, blank=False, unique=True)
 
     class Meta:
@@ -21,15 +25,18 @@ class Currency(models.Model):
 
 
 def get_default_language():
+    """Create the default language."""
     return Language.objects.get_or_create(name='English')[0]
 
 
 def get_default_currency():
+    """Create the default currency."""
     return Currency.objects.get_or_create(name='US Dollar')[0]
 
 
 class Provider(models.Model):
-    """docstring for Provider"""
+    """Represents a provider."""
+
     owner = models.ForeignKey(
         'auth.User', null=True, related_name='providers', on_delete=models.CASCADE)
     name = models.CharField(max_length=256, blank=False, unique=True)
@@ -43,6 +50,8 @@ class Provider(models.Model):
 
 
 class ServiceArea(models.Model):
+    """Represents a service area covered by a provider."""
+
     name = models.CharField(max_length=50, unique=True)
     provider = models.ForeignKey(
         'Provider', null=False, related_name='service_areas', on_delete=models.CASCADE)

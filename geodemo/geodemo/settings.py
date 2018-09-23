@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'django_extensions',
     'rest_framework',
+    'rest_framework_gis',
     'providers',
 ]
 
@@ -126,7 +127,7 @@ REST_FRAMEWORK = {
 }
 
 try:
-    from .local_settings import *
+    from .local_settings import *  # noqa
 except ImportError:
     # No local settings was found, skipping.
     pass

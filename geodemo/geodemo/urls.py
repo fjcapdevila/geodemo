@@ -31,6 +31,9 @@ schema_view = get_schema_view(title='Geodemo API')
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/v1/', include(router.urls)),
+    url(r'^api/v1/providers_by_location/$',
+        views.ProvidersByLocation.as_view(),
+        name="providers_by_location"),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^schema/$', schema_view),
 ]

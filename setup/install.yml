@@ -40,6 +40,12 @@
       tags:
         - docker
 
+    - name: Install packages
+      become: yes
+      apt:
+        name: python3-pip
+        state: present
+
     - pip:
         name: docker-py
       become: yes
@@ -69,7 +75,6 @@
         #
         - supervisor
         - htop
-        - python3-pip
         - virtualenv
         - nginx
         - libpq-dev # required to build psycopg

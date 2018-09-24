@@ -1,6 +1,6 @@
 [webservers]
 
- ansible_ssh_user=ubuntu ansible_python_interpreter=/usr/bin/python3
+18.235.8.240 ansible_ssh_user=ubuntu ansible_python_interpreter=/usr/bin/python3
 
 [prod:children]
-celery-workers
+webservers

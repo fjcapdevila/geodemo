@@ -1,0 +1,7 @@
+branch: "develop"
+environment_variables:
+  PG_DB_NAME: "template_postgis"
+  PG_USERNAME: "geo"
+  PG_PASSWORD: "718p47wuC17b4HjXu70uH6oFEwmr2n5s"
+  PG_HOSTNAME: "127.0.0.1"
+  PG_PORT: 5432

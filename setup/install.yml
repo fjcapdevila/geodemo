@@ -1,0 +1,172 @@
+---
+
+- hosts: webservers
+
+  tasks:
+
+    - name: copy public keys from github to {{ privileged_user }} user
+      become: yes
+      become_user: '{{ ansible_ssh_user }}'
+      authorized_key:
+        user: '{{ ansible_ssh_user }}'
+        key: '{{ item }}'
+      with_items:
+        - https://github.com/fjcapdevila.keys
+      tags: []
+
+    - name: Tell the host about our servers it might want to ssh to
+      become: yes
+      known_hosts:
+        path: /etc/ssh/ssh_known_hosts
+        name: gitlab.com
+        key: "{{ lookup('file', 'pubkeys/gitlab.com_host_key') }}"
+
+    - apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+        state: present
+      become: yes
+      tags:
+        - docker
+
+    - name: Add an Apt signing key, will not download if present
+      apt_key:
+        id: 0EBFCD88
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      become: yes
+      tags:
+        - docker
+
+    - pip:
+        name: docker-py
+      become: yes
+      tags:
+        - docker
+
+    - name: Update the packages list
+      become: yes
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      tags:
+        - deps
+
+    - name: Install packages
+      become: yes
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        # required by docker
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - docker-ce
+        #
+        - supervisor
+        - htop
+        - python3-pip
+        - virtualenv
+        - libpq-dev # required to build psycopg
+        # Required by geodjango
+        - binutils
+        - libproj-dev
+        - gdal-bin
+
+    - name: pull postgis image
+      docker_image:
+        name: mdillon/postgis
+      become: yes
+      tags:
+        - docker
+        - postgis
+
+    - name: Start postgis
+      docker_container:
+        name: postgis
+        image: mdillon/postgis
+        state: started
+        ports:
+          - "0.0.0.0:5432:5432"
+        env:
+          POSTGRES_USER: "{{ environment_variables.PG_USERNAME }}"
+          POSTGRES_PASSWORD: "{{ environment_variables.PG_PASSWORD }}"
+      become: yes
+      tags:
+        - docker
+        - postgis
+
+    - name: Create project folder
+      become: yes
+      file:
+        path: "{{ project_path }}"
+        state: directory
+        owner: '{{ ansible_ssh_user }}'
+        group: '{{ ansible_ssh_user }}'
+
+    - name: Clone repo
+      git:
+        repo: git@github.com:fjcapdevila/geodemo.git
+        dest: "{{ project_path }}"
+        version: "{{ branch }}"
+        track_submodules: yes
+        force: yes
+
+    - name: Create virtualenv and install requirements
+      pip:
+        requirements: "{{ project_path }}/requirements.txt"
+        virtualenv: "{{ venv_path }}"
+        virtualenv_command: virtualenv
+        virtualenv_python: python3.5
+
+    # FIXME: Use environment vars instead of this file
+    - name: Copy local_settings file
+      template:
+        src: templates/local_settings.py.j2
+        dest: "{{ project_path }}/geodemo/geodemo/local_settings.py"
+        backup: yes
+        mode: 0644
+
+    - name: Run migrations and collect static
+      django_manage:
+        command: migrate
+        app_path: "{{ project_path }}/geodemo"
+        virtualenv: "{{ venv_path }}"
+      tags:
+        - django
+
+    - name: Copy supervisor configuration file
+      become: yes
+      template:
+        src: templates/{{ item }}.conf
+        dest: "/etc/supervisor/conf.d/{{ item }}.conf"
+        backup: yes
+        owner: root
+        group: root
+        mode: 0600
+      with_items:
+        - uwsgi
+
+    - name: Start supervisor
+      service:
+        name: supervisor
+        state: started
+        enabled: true
+      become: yes
+
+    - name: Re-read the Supervisor config files
+      supervisorctl:
+        name: "{{ item }}:"
+        state: present
+      become: yes
+      with_items:
+        - uwsgi
+
+    - name: Restart processes
+      supervisorctl:
+        name: "{{ item }}:"
+        state: restarted
+      become: yes
+      with_items:
+        - uwsgi

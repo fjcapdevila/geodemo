@@ -1,0 +1,4 @@
+---
+
+project_path: "/opt/geodemo"
+venv_path:  "{{ project_path }}/venv"

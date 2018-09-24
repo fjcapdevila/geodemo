@@ -1,0 +1,14 @@
+#
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'template_postgis',
+        'USER': '{{ environment_variables.PG_USERNAME }}',
+        'PASSWORD': '{{ environment_variables.PG_PASSWORD }}',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', "{{ ansible_ssh_host }}"]

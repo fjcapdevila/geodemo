@@ -61,3 +61,6 @@ db.sqlite3
 
 # Ansible retry files
 *.retry
+
+# Vagrant
+.vagrant/

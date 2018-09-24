@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from .models import Currency, Language, Provider, ServiceArea
 from .permissions import IsOwner
 from .serializers import (CurrencySerializer, LanguageSerializer, ProviderSerializer,
-                          ServiceAreaSerializer)
+                          ServiceAreaSerializer, CoordinateSerializer)
 
 
 class ProviderViewSet(viewsets.ModelViewSet):
@@ -67,22 +67,16 @@ class ProvidersByLocation(APIView):
 
     def get(self, request):
         """Return a list of providers for a Location."""
-        lat = request.query_params.get('lat')
-        lng = request.query_params.get('lng')
-        if lat is None or lng is None:
-            return Response(
-                {"error": "You must provide both parameters: 'lat', 'lng'"},
-                status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            lat = float(lat)
-            lng = float(lng)
-        except ValueError:
-            return Response(
-                {"error": "Latitude and Longitude values must be float type"},
-                status=status.HTTP_400_BAD_REQUEST)
-
+        coords = CoordinateSerializer(data=request.query_params)
+        if not coords.is_valid():
+            return Response(data=coords.errors, status=status.HTTP_400_BAD_REQUEST)
+        lat, lng = coords.validated_data.values()
         location = Point(lat, lng)
         queryset = ServiceArea.objects.filter(area__contains=location)
-        service_areas = [ServiceAreaSerializer(instance=sa).data for sa in queryset]
-        return Response(service_areas)
+        if queryset.exists():
+            service_areas = [ServiceAreaSerializer(instance=sa).data for sa in queryset]
+            return Response(service_areas)
+        else:
+            return Response(
+                data={'Error': "There aren't available providers for that location."},
+                status=status.HTTP_404_NOT_FOUND)

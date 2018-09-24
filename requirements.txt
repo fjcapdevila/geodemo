@@ -9,5 +9,6 @@ Markdown==2.6.11
 coreapi==2.3.3
 djangorestframework-gis==0.13
 
+uwsgi==2.0.17
 factory_boy
 ipython==6.5.0

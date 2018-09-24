@@ -68,6 +68,7 @@
         - htop
         - python3-pip
         - virtualenv
+        - nginx
         - libpq-dev # required to build psycopg
         # Required by geodjango
         - binutils
@@ -88,7 +89,7 @@
         image: mdillon/postgis
         state: started
         ports:
-          - "0.0.0.0:5432:5432"
+          - "127.0.0.1:5432:5432"
         env:
           POSTGRES_USER: "{{ environment_variables.PG_USERNAME }}"
           POSTGRES_PASSWORD: "{{ environment_variables.PG_PASSWORD }}"
@@ -130,11 +131,14 @@
 
     - name: Run migrations and collect static
       django_manage:
-        command: migrate
+        command: "{{ item }}"
         app_path: "{{ project_path }}/geodemo"
         virtualenv: "{{ venv_path }}"
       tags:
         - django
+      with_items:
+        - migrate
+        - collectstatic
 
     - name: Copy supervisor configuration file
       become: yes
@@ -170,3 +174,35 @@
       become: yes
       with_items:
         - uwsgi
+
+    - name: Copy nginx configuration file
+      become: yes
+      template:
+        src: templates/django.conf
+        dest: "/etc/nginx/sites-available/django.conf"
+        backup: yes
+        owner: root
+        group: root
+        mode: 0644
+      tags:
+        - nginx
+
+    - name: Enable django site
+      file:
+        src: /etc/nginx/sites-available/django.conf
+        dest: /etc/nginx/sites-enabled/django.conf
+        owner: root
+        group: root
+        state: link
+      become: yes
+      tags:
+        - nginx
+
+    - name: Restart service nginx, in all cases
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes
+      become: yes
+      tags:
+        - nginx

@@ -1,5 +1,5 @@
 from django.contrib.gis.geos import Point
-from rest_framework import authentication, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.permissions import (IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -59,20 +59,17 @@ class ProvidersByLocation(APIView):
     - **lat**: Latitude (float) **required**.
     - **lng**: Longitude (float) **required**.
 
-    * Requires basic authentication.
     * Only authenticated users are able to access this view.
 
     """
 
-    authentication_classes = (authentication.BasicAuthentication, )
     permission_classes = (IsAuthenticated, )
 
     def get(self, request):
         """Return a list of providers for a Location."""
         lat = request.query_params.get('lat')
         lng = request.query_params.get('lng')
-
-        if 'lat' is None or 'lng' is None:
+        if lat is None or lng is None:
             return Response(
                 {"error": "You must provide both parameters: 'lat', 'lng'"},
                 status=status.HTTP_400_BAD_REQUEST)

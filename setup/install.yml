@@ -18,8 +18,11 @@
       become: yes
       known_hosts:
         path: /etc/ssh/ssh_known_hosts
-        name: gitlab.com
-        key: "{{ lookup('file', 'pubkeys/gitlab.com_host_key') }}"
+        name: "{{ item }}"
+        key: "{{ lookup('file', 'pubkeys/' + item + '_host_key') }}"
+      with_items:
+        - gitlab.com
+        - github.com
 
     - apt_repository:
         repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"

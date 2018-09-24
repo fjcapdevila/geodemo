@@ -11,7 +11,8 @@ class ProviderSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Provider
-        fields = ('name', 'email', 'phone_number', 'language', 'currency', 'service_areas', 'owner')
+        fields = ('name', 'email', 'phone_number', 'language', 'currency', 'service_areas',
+                  'owner')
 
 
 class LanguageSerializer(serializers.ModelSerializer):
@@ -37,3 +38,9 @@ class ServiceAreaSerializer(GeoFeatureModelSerializer):
         model = ServiceArea
         geo_field = "area"
         fields = '__all__'
+
+
+class CoordinateSerializer(serializers.Serializer):
+    """Serializer to validate latitud and longitude values."""
+    lat = serializers.FloatField(min_value=-90.0, max_value=90.0)
+    lng = serializers.FloatField(min_value=-180.0, max_value=180.0)

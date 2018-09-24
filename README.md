@@ -5,11 +5,11 @@ This is a simple project for testing purposes, it is not **production-ready** at
 
 ### Admin
 
-http://18.235.8.240/api/v1/
+http://<server_address>/api/v1/
 
 ### API root
 
-http://18.235.8.240/api/v1/
+http://<server_address>/api/v1/
 
 
 ### Create a language
@@ -22,7 +22,7 @@ curl -i -X POST \
 '{
   "name": "French"
 }' \
- 'http://18.235.8.240/api/v1/languages/'
+ 'http://<server_address>/api/v1/languages/'
 ```
 
 
@@ -36,7 +36,7 @@ curl -i -X POST \
 '{
   "name": "Real"
 }' \
- 'http://18.235.8.240/api/v1/currencies/'
+ 'http://<server_address>/api/v1/currencies/'
 ```
 
 
@@ -51,11 +51,11 @@ curl -i -X POST \
   "name": "Provider 3",
   "email": "user@provider3.com",
   "phone_number": "+12345667",
-  "language": "http://18.235.8.240/api/v1/languages/1/",
-  "currency": "http://18.235.8.240/api/v1/currencies/1/",
+  "language": "http://<server_address>/api/v1/languages/1/",
+  "currency": "http://<server_address>/api/v1/currencies/1/",
   "service_areas": []
 }' \
- 'http://18.235.8.240/api/v1/providers/'
+ 'http://<server_address>/api/v1/providers/'
 ```
 
 
@@ -104,7 +104,7 @@ curl -i -X POST \
         "provider": 2
     }
 }' \
- 'http://18.235.8.240/api/v1/service_areas/'
+ 'http://<server_address>/api/v1/service_areas/'
 ```
 
 ### Get available providers for a location
@@ -112,7 +112,7 @@ curl -i -X POST \
 ```bash
 curl -i -X GET \
    -H "Authorization:Basic <edited>" \
- 'http://18.235.8.240/api/v1/providers_by_location/?lat=1.0&lng=1.0'
+ 'http://<server_address>/api/v1/providers_by_location/?lat=1.0&lng=1.0'
 ```
 
 
